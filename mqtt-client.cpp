@@ -3,6 +3,10 @@
 #include <cerrno>
 #include <cstring>
 #include <string>
+#include <sstream>
+#include <vector>
+#include <iterator>
+#include <algorithm>
 #include <list>
 
 namespace mqtt::client {
@@ -47,6 +51,12 @@ void client_connection::run() {
 	return;
 }
 
+int active_connection = 0;
+
+void draw_prompt() {
+	std::cout << "[nyamuk " << (active_connection == 0 ? "disconnected" : "connected") << "]$ ";
+}
+
 int main(int argc, char** argv) {
 	std::cout << "Welcome to Nyamuk! An MQTT testing program by Gilang Hamidy" << std::endl;
 
@@ -64,14 +74,27 @@ int main(int argc, char** argv) {
 	while(true)
 	{
 		// Obtain command
-		std::cout << "[nyamuk] $ ";
+		draw_prompt();
 		std::string line_command;
 		std::getline(std::cin, line_command);
 
 		if(line_command.length() == 0)
 			continue;
 
-		
+		std::istringstream iss(line_command);
+		std::vector<std::string> tokens{ std::istream_iterator<std::string>{ iss }, std::istream_iterator<std::string>{}};
+
+		auto& command = tokens[0];
+		std::transform(command.begin(), command.end(), command.begin(), std::tolower);
+
+		if(command == "quit") {
+			std::cout << "Bye!" << std::endl;
+			break;
+		} else if(command == "open") {
+			// Open a new connection
+			std::cout << "Trying to open a new connection..." << std::endl;
+			auto& new_conn = connections.emplace(broker_addr);
+		}
 	}
 
 	mosqpp::lib_cleanup();
