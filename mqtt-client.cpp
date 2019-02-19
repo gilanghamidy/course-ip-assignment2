@@ -14,6 +14,7 @@ public:
 	client_connection(char const* addr);
 	virtual ~client_connection() { }
 	void run();
+	/*
 	virtual void on_connect(int rc);
 	virtual void on_connect_with_flags(int rc, int flags);
 	virtual void on_disconnect(int rc);
@@ -23,6 +24,7 @@ public:
 	virtual void on_unsubscribe(int mid);
 	virtual void on_log(int level, const char * str);
 	virtual void on_error();
+	*/
 };
 
 }
